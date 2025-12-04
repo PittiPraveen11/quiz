@@ -8,7 +8,8 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
-  useAnimatedProps 
+  useAnimatedProps,
+  withTiming
 } from "react-native-reanimated";
 
 type ResultScreenProps = NativeStackNavigationProp<RootStackParamList, "Result">;
@@ -66,6 +67,7 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
     
     animatedScore.value = withSpring(state.score, { damping: 10 });
   }, []);
+  
 
   return (
     <View style={styles.container}>
