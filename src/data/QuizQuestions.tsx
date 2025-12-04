@@ -6,7 +6,7 @@ import { QuestionModel } from '../QuizInterface';
             imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6WmZ3B9TiVIN5XBzyOSA26_O1PR-sCQL6iA&s",
             options: [
                 {
-                    value: "Nandi Bull",
+                    value: "Nandi Bull ",
                     serialNumber: 1,
                     correct: 1
                 },
