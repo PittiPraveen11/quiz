@@ -55,14 +55,14 @@ export default function QuestionScreen({
           </LinearGradient>
         </View>
 
-        <View style={styles.timer}>
+        {/* <View style={styles.timer}>
           <Icon source={require("../assets/clock.png")} size={20} color="#D17800" />
           <Text style={styles.timerText}> 90s</Text>
-        </View>
+        </View> */}
       </View>
 
       {/* Progress bar  .................................. */}
-      <View style={styles.progressContainer}>
+      {/* <View style={styles.progressContainer}>
         <View style={styles.progressBackground}>
           <LinearGradient
             colors={["#FF931E", "#FEB94A", "#FFC117", "#FEB94A", "#E27A19"]}
@@ -74,7 +74,7 @@ export default function QuestionScreen({
             ]}
           />
         </View>
-      </View>
+      </View> */}
 
 
       {/* Main Question Content  .................................. */}
@@ -115,7 +115,7 @@ export default function QuestionScreen({
               disabled={state.showAnswer}
             >
               <Text style={[styles.optionText, { color: textColor }]}>
-                {opt.value}
+                ({opt.serialNumber}).  {opt.value}
               </Text>
 
               {/* Show Correct */}
@@ -301,10 +301,11 @@ const styles = StyleSheet.create({
   },
 
   option: {
-    padding: 15,
+    flex: 1,
+    padding: 10,
     borderRadius: 12,
     borderWidth: 1,
-    marginVertical: 10,
+    marginVertical: 5,
 
     flexDirection: "row",
     justifyContent: "space-between",
