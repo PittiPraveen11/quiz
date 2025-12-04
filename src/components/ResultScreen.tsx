@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { QuizContext } from "../context/QuizContect";
 import { QuizQuestions } from "../data/QuizQuestions";
@@ -8,17 +8,16 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
-  useAnimatedProps,
-  withTiming
+  useDerivedValue,
+  runOnJS,
+  withTiming,
 } from "react-native-reanimated";
 
 type ResultScreenProps = NativeStackNavigationProp<RootStackParamList, "Result">;
 
 export default function ResultScreen({ navigation }: { navigation: ResultScreenProps }) {
-
-  const AnimatedText = Animated.createAnimatedComponent(Text);
   const { state, dispatch } = useContext(QuizContext);
-  const accuracy = ((state.score / QuizQuestions.length) * 100).toFixed(2);
+
 
   let stars = 0;
   if (state.score >= 0 && state.score <= 0.5) stars = 1;
@@ -28,55 +27,51 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
   const s1 = useSharedValue(0);
   const s2 = useSharedValue(0);
   const s3 = useSharedValue(0);
-  const animatedScore = useSharedValue(0);
 
-  const animatedScoreProps = useAnimatedProps(() => {
-    return {
-      text: `Score: ${Math.round(animatedScore.value)} / ${QuizQuestions.length}`,
-    };
-  });
-  
-
-
-  // ⭐ ANIMATED STYLES
-  const star1Style = useAnimatedStyle(() => ({
-    transform: [{ scale: s1.value }],
-  }));
-
-  const star2Style = useAnimatedStyle(() => ({
-    transform: [{ scale: s2.value }],
-  }));
-
-  const star3Style = useAnimatedStyle(() => ({
-    transform: [{ scale: s3.value }],
-  }));
-
+  const star1Style = useAnimatedStyle(() => ({ transform: [{ scale: s1.value }] }));
+  const star2Style = useAnimatedStyle(() => ({ transform: [{ scale: s2.value }] }));
+  const star3Style = useAnimatedStyle(() => ({ transform: [{ scale: s3.value }] }));
 
   useEffect(() => {
+    // pop-in timings
     if (stars >= 1) s1.value = withSpring(1, { damping: 10 });
+    if (stars >= 2) setTimeout(() => (s2.value = withSpring(1, { damping: 10 })), 250);
+    if (stars >= 3) setTimeout(() => (s3.value = withSpring(1, { damping: 10 })), 500);
+  }, [stars]);
 
-    if (stars >= 2)
-      setTimeout(() => {
-        s2.value = withSpring(1, { damping: 10});
-      }, 250);
+  // === SCORE COUNTER ANIMATION ===
+  const animatedScore = useSharedValue(0);
 
-    if (stars === 3)
-      setTimeout(() => {
-        s3.value = withSpring(1, { damping: 10 });
-      }, 500);
-    
-    animatedScore.value = withSpring(state.score, { damping: 10 });
-  }, []);
-  
+  // animate shared value from 0 -> state.score when screen mounts / score changes
+  useEffect(() => {
+    // choose duration / easing as you like
+    animatedScore.value = withTiming(state.score, { duration: 500 });
+  }, [state.score]);
+
+  // Mirror the animated shared value to React state so Text re-renders.
+  // We round the value for display.
+  const [displayScore, setDisplayScore] = useState<number>(0);
+
+  useDerivedValue(() => {
+    // this runs on UI thread per frame as animatedScore changes
+    const rounded = Math.round(animatedScore.value);
+    // send to JS thread to update React state (which will re-render the Text)
+    runOnJS(setDisplayScore)(rounded);
+    // return something (not used); keeping it pure
+    return rounded;
+  }, [animatedScore]);
+
+  const accuracy = ((state.score / QuizQuestions.length) * 100).toFixed(2);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Quiz Complete!</Text>
 
-      {/* ⭐ STAR ROW */}
-      <View style={styles.starRow}>
+      {/* Score counter (animated) */}
+      <Text style={styles.scoreLarge}>Score: {displayScore} / {QuizQuestions.length}</Text>
 
-        {/* STAR 1 */}
+      {/* STAR ROW */}
+      <View style={styles.starRow}>
         <View style={styles.starWrapper}>
           <Image source={require("../assets/star_grey.png")} style={styles.star} />
           <Animated.Image
@@ -85,7 +80,6 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
           />
         </View>
 
-        {/* STAR 2 */}
         <View style={styles.starWrapper}>
           <Image source={require("../assets/star_grey.png")} style={styles.star} />
           <Animated.Image
@@ -94,7 +88,6 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
           />
         </View>
 
-        {/* STAR 3 */}
         <View style={styles.starWrapper}>
           <Image source={require("../assets/star_grey.png")} style={styles.star} />
           <Animated.Image
@@ -104,26 +97,14 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
         </View>
       </View>
 
-      <AnimatedText
-          animatedProps={animatedScoreProps as any}
-          style={{ fontSize: 22, fontWeight: "600", marginTop: 20 }}
-        />
-
-
-      <Animated.Text style={[styles.score, { marginTop: 20 }]}>Accuracy: {accuracy}%</Animated.Text>
+      <Text style={[styles.smallText, { marginTop: 20 }]}>Accuracy: {accuracy}%</Text>
 
       <TouchableOpacity
         onPress={() => {
           dispatch({ type: "RESET" });
           navigation.replace("Question");
         }}
-        style={{
-          marginTop: 40,
-          padding: 15,
-          backgroundColor: "green",
-          borderRadius: 8,
-          width: "70%",
-        }}
+        style={styles.restartBtn}
       >
         <Text style={{ color: "white", textAlign: "center", fontSize: 18 }}>
           Restart Quiz
@@ -134,14 +115,24 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
 }
 
 const styles = StyleSheet.create({
-  score: {
-    fontSize: 12,
-    fontWeight: "600",
-    fontFamily: "Poppins-SemiBold",
-    lineHeight: 12,
-    letterSpacing: -0.3,
-    verticalAlign: "middle",
+  scoreLarge: {
+    fontSize: 26,
+    fontWeight: "700",
+    marginTop: 8,
+    color: "#333",
   },
+  smallText: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  restartBtn: {
+    marginTop: 40,
+    padding: 15,
+    backgroundColor: "green",
+    borderRadius: 8,
+    width: "70%",
+  },
+
   container: {
     flex: 1,
     padding: 20,
