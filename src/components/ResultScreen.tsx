@@ -6,11 +6,11 @@ import { RootStackParamList } from "../../App";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Animated, {
   useSharedValue,
+  withTiming,
   useAnimatedStyle,
   withSpring,
-  useDerivedValue,
+  useAnimatedReaction,
   runOnJS,
-  withTiming,
 } from "react-native-reanimated";
 
 type ResultScreenProps = NativeStackNavigationProp<RootStackParamList, "Result">;
@@ -24,42 +24,41 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
   else if (state.score >= 0.5 && state.score <= 1.5) stars = 2;
   else if (state.score >= 1.5 && state.score <= 3) stars = 3;
 
+  // shared values for stars
   const s1 = useSharedValue(0);
   const s2 = useSharedValue(0);
   const s3 = useSharedValue(0);
 
+  // styles for star animations
   const star1Style = useAnimatedStyle(() => ({ transform: [{ scale: s1.value }] }));
   const star2Style = useAnimatedStyle(() => ({ transform: [{ scale: s2.value }] }));
   const star3Style = useAnimatedStyle(() => ({ transform: [{ scale: s3.value }] }));
 
   useEffect(() => {
-    // pop-in timings
-    if (stars >= 1) s1.value = withSpring(1, { damping: 10 });
-    if (stars >= 2) setTimeout(() => (s2.value = withSpring(1, { damping: 10 })), 250);
-    if (stars >= 3) setTimeout(() => (s3.value = withSpring(1, { damping: 10 })), 500);
+    if (stars >= 1) s1.value = withSpring(1, { damping: 30 });
+    if (stars >= 2) setTimeout(() => (s2.value = withSpring(1, { damping: 30 })), 250);
+    if (stars >= 3) setTimeout(() => (s3.value = withSpring(1, { damping: 30 })), 500);
   }, [stars]);
 
-  // === SCORE COUNTER ANIMATION ===
   const animatedScore = useSharedValue(0);
+  const [displayScore, setDisplayScore] = useState(0);
 
-  // animate shared value from 0 -> state.score when screen mounts / score changes
   useEffect(() => {
-    // choose duration / easing as you like
-    animatedScore.value = withTiming(state.score, { duration: 500 });
+    console.log("state.score", state.score);
+    setTimeout(() => {
+      animatedScore.value = withTiming(state.score, {
+        duration: 500,
+      });
+    }, 3000);
   }, [state.score]);
 
-  // Mirror the animated shared value to React state so Text re-renders.
-  // We round the value for display.
-  const [displayScore, setDisplayScore] = useState<number>(0);
-
-  useDerivedValue(() => {
-    // this runs on UI thread per frame as animatedScore changes
-    const rounded = Math.round(animatedScore.value);
-    // send to JS thread to update React state (which will re-render the Text)
-    runOnJS(setDisplayScore)(rounded);
-    // return something (not used); keeping it pure
-    return rounded;
-  }, [animatedScore]);
+  // Update displayed score as animation progresses
+  useAnimatedReaction(
+    () => animatedScore.value,
+    (currentValue) => {
+      runOnJS(setDisplayScore)(Math.round(currentValue));
+    }
+  );
 
   const accuracy = ((state.score / QuizQuestions.length) * 100).toFixed(2);
 
@@ -67,11 +66,14 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
     <View style={styles.container}>
       <Text style={styles.title}>Quiz Complete!</Text>
 
-      {/* Score counter (animated) */}
-      <Text style={styles.scoreLarge}>Score: {displayScore} / {QuizQuestions.length}</Text>
+      {/* ⭐ ANIMATED SCORE */}
+      <Text style={styles.scoreLarge}>
+        Score: {displayScore} / {QuizQuestions.length}
+      </Text>
 
-      {/* STAR ROW */}
+      {/* ⭐ STAR ROW */}
       <View style={styles.starRow}>
+
         <View style={styles.starWrapper}>
           <Image source={require("../assets/star_grey.png")} style={styles.star} />
           <Animated.Image
@@ -95,10 +97,12 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
             style={[styles.star, styles.absolute, star3Style]}
           />
         </View>
+
       </View>
 
       <Text style={[styles.smallText, { marginTop: 20 }]}>Accuracy: {accuracy}%</Text>
 
+      {/* Restart button */}
       <TouchableOpacity
         onPress={() => {
           dispatch({ type: "RESET" });
@@ -107,7 +111,7 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
         style={styles.restartBtn}
       >
         <Text style={{ color: "white", textAlign: "center", fontSize: 18 }}>
-          Restart Quiz
+          Continue
         </Text>
       </TouchableOpacity>
     </View>
