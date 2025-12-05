@@ -23,6 +23,8 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
   if (state.score >= 0 && state.score <= 0.5) stars = 1;
   else if (state.score >= 0.5 && state.score <= 1.5) stars = 2;
   else if (state.score >= 1.5 && state.score <= 3) stars = 3;
+  const accuracy: number = Number((state.score / QuizQuestions.length) * 100);
+  const pointsEarned: number = Number((state.score) * 10);
 
   // shared values for stars
   const s1 = useSharedValue(0);
@@ -41,7 +43,11 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
   }, [stars]);
 
   const animatedScore = useSharedValue(0);
+  const animatedAccuracy = useSharedValue(0);
+  const animatedPointsEarned = useSharedValue(0);
   const [displayScore, setDisplayScore] = useState(0);
+  const [displayAccuracy, setDisplayAccuracy] = useState(0);
+  const [displayPointsEarned, setDisplayPointsEarned] = useState(0);
 
   useEffect(() => {
     console.log("state.score", state.score);
@@ -50,27 +56,49 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
         duration: 500,
       });
     }, 3000);
-  }, [state.score]);
-
+  }, []);
+  useEffect(() => {
+    console.log("accuracy", accuracy);
+    setTimeout(() => {
+      animatedAccuracy.value = withTiming(accuracy, {
+        duration: 500,
+      });
+    }, 3000);
+  }, []);
+  useEffect(() => {
+    console.log("pointsEarned", pointsEarned);
+    setTimeout(() => {
+      animatedPointsEarned.value = withTiming(pointsEarned, {
+        duration: 500,
+      });
+    }, 3000);
+  }, []);
   // Update displayed score as animation progresses
   useAnimatedReaction(
     () => animatedScore.value,
     (currentValue) => {
-      runOnJS(setDisplayScore)(Math.round(currentValue));
+      runOnJS(setDisplayScore)(Number(currentValue.toFixed(2))); 
     }
   );
 
-  const accuracy = ((state.score / QuizQuestions.length) * 100).toFixed(2);
+  
+  useAnimatedReaction(
+    () => animatedAccuracy.value,
+    (currentValue) => {
+      runOnJS(setDisplayAccuracy)(Number(currentValue.toFixed(2)));
+    }
+  );
 
+  useAnimatedReaction(
+    () => animatedPointsEarned.value,
+    (currentValue) => {
+      runOnJS(setDisplayPointsEarned)(Number(currentValue.toFixed(2)));
+    }
+  );
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Quiz Complete!</Text>
-
-      {/* ⭐ ANIMATED SCORE */}
-      <Text style={styles.scoreLarge}>
-        Score: {displayScore} / {QuizQuestions.length}
-      </Text>
-
+       
       {/* ⭐ STAR ROW */}
       <View style={styles.starRow}>
 
@@ -100,7 +128,34 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
 
       </View>
 
-      <Text style={[styles.smallText, { marginTop: 20 }]}>Accuracy: {accuracy}%</Text>
+      <View style={styles.scoreRow}>
+          <View style={styles.scoreItem}>
+            <Text style={styles.scoreLarge}>
+             {displayScore} 
+            </Text>
+            <Text style={styles.scoreLarge}>
+              Score
+            </Text>
+          </View>
+          <View style={styles.scoreItem}>
+            <Text style={styles.scoreLarge}>
+              {displayAccuracy}% 
+            </Text>
+            <Text style={styles.scoreLarge}>
+              Accuracy
+            </Text>
+          </View>
+        </View>
+        <View style={styles.pointsEarnedRow}>
+          <View style={styles.pointsEarnedItem}>
+            <Text style={styles.pointsEarnedLarge}>
+             + {displayPointsEarned} Points
+            </Text>
+            {/* <Text style={styles.pointsEarnedLarge}>
+              Points Earned
+            </Text> */}
+          </View>
+      </View>
 
       {/* Restart button */}
       <TouchableOpacity
@@ -119,15 +174,49 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
 }
 
 const styles = StyleSheet.create({
-  scoreLarge: {
-    fontSize: 26,
-    fontWeight: "700",
-    marginTop: 8,
-    color: "#333",
+  scoreRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 30,
+    gap: 10,
+    alignItems: "center",
   },
-  smallText: {
-    fontSize: 14,
+  scoreItem: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  scoreLarge: {
+    fontSize: 12,
     fontWeight: "600",
+    marginTop: 8,
+    color: "#5A3000",
+    fontFamily: "Poppins-SemiBold",
+    lineHeight: 12,
+    letterSpacing: -0.3,
+    verticalAlign: "middle",
+  },
+  pointsEarnedRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 30,
+    gap: 10,
+    alignItems: "center",
+  },
+  pointsEarnedItem: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pointsEarnedLarge: {
+    fontSize: 12,
+    fontWeight: "600",
+    marginTop: 8,
+    color: "#5A3000",
+    fontFamily: "Poppins-SemiBold",
+    lineHeight: 12,
+    letterSpacing: -0.3,
+    verticalAlign: "middle",
   },
   restartBtn: {
     marginTop: 40,
