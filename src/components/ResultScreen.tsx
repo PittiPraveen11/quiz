@@ -17,15 +17,6 @@ type ResultScreenProps = NativeStackNavigationProp<RootStackParamList, "Result">
 
 export default function ResultScreen({ navigation }: { navigation: ResultScreenProps }) {
   const { state, dispatch } = useContext(QuizContext);
-
-
-  let stars = 0;
-  if (state.score >= 0 && state.score <= 0.5) stars = 1;
-  else if (state.score >= 0.5 && state.score <= 1.5) stars = 2;
-  else if (state.score >= 1.5 && state.score <= 3) stars = 3;
-  const accuracy: number = Number((state.score / QuizQuestions.length) * 100);
-  const pointsEarned: number = Number((state.score) * 10);
-
   // shared values for stars
   const s1 = useSharedValue(0);
   const s2 = useSharedValue(0);
@@ -37,10 +28,10 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
   const star3Style = useAnimatedStyle(() => ({ transform: [{ scale: s3.value }] }));
 
   useEffect(() => {
-    if (stars >= 1) s1.value = withSpring(1, { damping: 30 });
-    if (stars >= 2) setTimeout(() => (s2.value = withSpring(1, { damping: 30 })), 250);
-    if (stars >= 3) setTimeout(() => (s3.value = withSpring(1, { damping: 30 })), 500);
-  }, [stars]);
+    if (state.stars >= 1) s1.value = withSpring(1, { damping: 30 });
+    if (state.stars >= 2) setTimeout(() => (s2.value = withSpring(1, { damping: 30 })), 250);
+    if (state.stars >= 3) setTimeout(() => (s3.value = withSpring(1, { damping: 30 })), 500);
+  }, [state.stars]);
 
   const animatedScore = useSharedValue(0);
   const animatedAccuracy = useSharedValue(0);
@@ -58,22 +49,21 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
     }, 3000);
   }, []);
   useEffect(() => {
-    console.log("accuracy", accuracy);
+    console.log("accuracy", state.accuracy);
     setTimeout(() => {
-      animatedAccuracy.value = withTiming(accuracy, {
+      animatedAccuracy.value = withTiming(state.accuracy, {
         duration: 500,
       });
     }, 3000);
   }, []);
   useEffect(() => {
-    console.log("pointsEarned", pointsEarned);
+    console.log("pointsEarned", state.pointsEarned);
     setTimeout(() => {
-      animatedPointsEarned.value = withTiming(pointsEarned, {
+      animatedPointsEarned.value = withTiming(state.pointsEarned, {
         duration: 500,
       });
     }, 3000);
   }, []);
-  // Update displayed score as animation progresses
   useAnimatedReaction(
     () => animatedScore.value,
     (currentValue) => {
@@ -97,11 +87,9 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
   );
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Quiz Complete!</Text>
-       
-      {/* ⭐ STAR ROW */}
-      <View style={styles.starRow}>
 
+      <View style={styles.starsContainer}>
+        {/* star 1 */}
         <View style={styles.starWrapper}>
           <Image source={require("../assets/star_grey.png")} style={styles.star} />
           <Animated.Image
@@ -109,7 +97,8 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
             style={[styles.star, styles.absolute, star1Style]}
           />
         </View>
-
+  
+        {/* star 2 */}
         <View style={styles.starWrapper}>
           <Image source={require("../assets/star_grey.png")} style={styles.star} />
           <Animated.Image
@@ -117,7 +106,8 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
             style={[styles.star, styles.absolute, star2Style]}
           />
         </View>
-
+  
+        {/* star 3 */}
         <View style={styles.starWrapper}>
           <Image source={require("../assets/star_grey.png")} style={styles.star} />
           <Animated.Image
@@ -125,127 +115,64 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
             style={[styles.star, styles.absolute, star3Style]}
           />
         </View>
-
       </View>
-
-      <View style={styles.scoreRow}>
-          <View style={styles.scoreItem}>
-            <Text style={styles.scoreLarge}>
-             {displayScore} 
-            </Text>
-            <Text style={styles.scoreLarge}>
-              Score
-            </Text>
-          </View>
-          <View style={styles.scoreItem}>
-            <Text style={styles.scoreLarge}>
-              {displayAccuracy}% 
-            </Text>
-            <Text style={styles.scoreLarge}>
-              Accuracy
-            </Text>
-          </View>
+  
+      {/* Score + Accuracy row */}
+      <View style={styles.scoreAccuracyRow}>
+        <View style={styles.scoreBox}>
+          <Text style={styles.scoreMain}>{displayScore}</Text>
+          <Text style={styles.scoreLabel}>Correct{"\n"}Answers</Text>
         </View>
-        <View style={styles.pointsEarnedRow}>
-          <View style={styles.pointsEarnedItem}>
-            <Text style={styles.pointsEarnedLarge}>
-             + {displayPointsEarned} Points
-            </Text>
-            {/* <Text style={styles.pointsEarnedLarge}>
-              Points Earned
-            </Text> */}
-          </View>
+  
+        <View style={styles.verticalDivider} />
+  
+        <View style={styles.scoreBox}>
+          <Text style={styles.scoreMain}>{displayAccuracy}%</Text>
+          <Text style={styles.scoreLabel}>Accuracy</Text>
+        </View>
       </View>
-
-      {/* Restart button */}
+  
+      {/* Earned Points */}
+      <View style={styles.pointsContainer}>
+        <Image
+          source={require("../assets/earnedcoins.png")}
+          style={styles.pointsIcon}
+        />
+        <Text style={styles.pointsText}>+ {displayPointsEarned} Points</Text>
+      </View>
+  
+      {/* Restart / Continue button */}
       <TouchableOpacity
         onPress={() => {
-          dispatch({ type: "RESET" });
-          navigation.replace("Question");
+          navigation.replace("ResultLeaderScreen");
         }}
-        style={styles.restartBtn}
+        style={styles.continueBtn}
       >
-        <Text style={{ color: "white", textAlign: "center", fontSize: 18 }}>
-          Continue
-        </Text>
+        <Text style={styles.continueText}>Continue</Text>
       </TouchableOpacity>
     </View>
-  );
+  ); 
+  
 }
 
 const styles = StyleSheet.create({
-  scoreRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 30,
-    gap: 10,
-    alignItems: "center",
-  },
-  scoreItem: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  scoreLarge: {
-    fontSize: 12,
-    fontWeight: "600",
-    marginTop: 8,
-    color: "#5A3000",
-    fontFamily: "Poppins-SemiBold",
-    lineHeight: 12,
-    letterSpacing: -0.3,
-    verticalAlign: "middle",
-  },
-  pointsEarnedRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 30,
-    gap: 10,
-    alignItems: "center",
-  },
-  pointsEarnedItem: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  pointsEarnedLarge: {
-    fontSize: 12,
-    fontWeight: "600",
-    marginTop: 8,
-    color: "#5A3000",
-    fontFamily: "Poppins-SemiBold",
-    lineHeight: 12,
-    letterSpacing: -0.3,
-    verticalAlign: "middle",
-  },
-  restartBtn: {
-    marginTop: 40,
-    padding: 15,
-    backgroundColor: "green",
-    borderRadius: 8,
-    width: "70%",
-  },
-
   container: {
     flex: 1,
-    padding: 20,
+    backgroundColor: "#FFF7EB",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    paddingTop: 120,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#000",
-    marginBottom: 20,
-  },
-  starRow: {
+
+  /* ⭐ STARS */
+  starsContainer: {
     flexDirection: "row",
-    marginTop: 30,
-    gap: 15,
+    marginBottom: 40,
   },
   starWrapper: {
     width: 70,
     height: 70,
+    marginHorizontal: 10,
   },
   star: {
     width: "100%",
@@ -257,4 +184,74 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
   },
+
+  /* Score + Accuracy row */
+  scoreAccuracyRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 40,
+    width: "80%",
+    justifyContent: "center",
+  },
+  scoreBox: {
+    flex: 1,
+    alignItems: "center",
+  },
+  scoreMain: {
+    fontSize: 32,
+    fontWeight: "700",
+    color: "#3A2A1A",
+  },
+  scoreLabel: {
+    marginTop: 6,
+    fontSize: 13,
+    textAlign: "center",
+    color: "#8E7A62",
+    lineHeight: 16,
+    fontWeight: "600",
+  },
+  verticalDivider: {
+    width: 1,
+    height: 60,
+    backgroundColor: "#CBB9A2",
+    marginHorizontal: 10,
+  },
+
+  /* Points earned section */
+  pointsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFE9C7",
+    paddingVertical: 14,
+    paddingHorizontal: 28,
+    borderRadius: 14,
+    marginBottom: 50,
+  },
+  pointsIcon: {
+    width: 26,
+    height: 26,
+    marginRight: 10,
+    resizeMode: "contain",
+  },
+  pointsText: {
+    fontSize: 17,
+    fontWeight: "700",
+    color: "#B97A13",
+  },
+
+  /* Continue Button */
+  continueBtn: {
+    backgroundColor: "#F6A024",
+    paddingVertical: 16,
+    paddingHorizontal: 100,
+    borderRadius: 20,
+    elevation: 5,
+  },
+  continueText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "700",
+    textAlign: "center",
+  },
 });
+
