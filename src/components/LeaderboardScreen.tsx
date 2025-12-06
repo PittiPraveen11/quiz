@@ -26,7 +26,7 @@ const LeaderboardScreen = ({ navigation }: { navigation: LeaderboardScreenProps 
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
         <View style={styles.bottomCardWrapper}>
             <LinearGradient
             colors={["#FFB71B", "#FFC446", "#FFA930", "#FFB71B", "#FF9500"]}
@@ -68,7 +68,7 @@ const LeaderboardScreen = ({ navigation }: { navigation: LeaderboardScreenProps 
             </LinearGradient>
             </LinearGradient>
         </View>
-      <View>
+      <ScrollView style={styles.leaderboardScrollView}>
         <View style={styles.leaderboardContainer}>
             {
                 leaderboardData.map((item, index) => (
@@ -81,9 +81,9 @@ const LeaderboardScreen = ({ navigation }: { navigation: LeaderboardScreenProps 
             }
           
         </View>
-      </View>
+      </ScrollView>
 
-    </ScrollView>
+    </View>
 
   )
 }
@@ -97,6 +97,11 @@ const styles = StyleSheet.create({
     },
     leaderboardContainer: {
         // flex: 1,
+        backgroundColor: "white",
+        marginTop: 20,
+    },
+    leaderboardScrollView: {
+        flex: 1,
         backgroundColor: "white",
         marginTop: 20,
     },
