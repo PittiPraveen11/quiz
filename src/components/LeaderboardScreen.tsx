@@ -15,9 +15,10 @@ const LeaderboardScreen = ({ navigation }: { navigation: LeaderboardScreenProps 
   const { state, dispatch } = useContext(QuizContext);
 
   const topThree = leaderboardData.slice(0, 3);
-  const leftPerson = topThree[1] ?? topThree[0] ?? { avatar: require("../assets/person1.png"), userName: "", totalScore: 0, rank: 2 };
-  const centerPerson = topThree[0] ?? topThree[1] ?? { avatar: require("../assets/person1.png"), userName: "", totalScore: 0, rank: 1 };
-  const rightPerson = topThree[2] ?? topThree[1] ?? { avatar: require("../assets/person1.png"), userName: "", totalScore: 0, rank: 3 };
+
+  const left = topThree[1];
+  const center = topThree[0];
+  const right = topThree[2];
 
   const rankIcons = {
     1: require("../assets/firstrank.png"),
@@ -27,231 +28,246 @@ const LeaderboardScreen = ({ navigation }: { navigation: LeaderboardScreenProps 
 
   return (
     <View style={styles.container}>
-        <View style={styles.bottomCardWrapper}>
-            <LinearGradient
-            colors={["#FFB71B", "#FFC446", "#FFA930", "#FFB71B", "#FF9500"]}
+      
+      {/* 🔶 TOP CARD — NOT SCROLLABLE */}
+      <View style={styles.topCardWrapper}>
+        <LinearGradient
+          colors={["#FFB71B", "#FFC446", "#FFA930", "#FFB71B"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.cardBorder}
+        >
+          <LinearGradient
+            colors={["#361E02", "#A26721"]}
             start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.borderGradient}
-            >
-            <LinearGradient
-                colors={[ "#361E02", "#A26721"]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.bottomCard}
-            > 
-                <View style={styles.notch}>
-                <Text style={styles.notchText}>Leaderboard</Text>
-                </View>
-                <View style={styles.topThreeContainer}>
-                <View style={styles.smallRank}>
-                    <Image source={rankIcons[2]} style={styles.rankBadgeSmall} />
-                    <Image source={leftPerson.avatar} style={styles.smallAvatar} />
-                    <Text style={styles.smallName} numberOfLines={1}>{leftPerson.userName}</Text>
-                    <Text style={styles.smallScore}>{leftPerson.totalScore}</Text>
-                </View>
+            end={{ x: 1, y: 1 }}
+            style={styles.topCard}
+          >
+            <Text style={styles.headerTitle}>Leaderboard</Text>
 
-                <View style={styles.centerRank}>
-                    <Image source={rankIcons[1]} style={styles.rankBadgeBig} />
-                    <Image source={centerPerson.avatar} style={styles.bigAvatar} />
-                    <Text style={styles.bigName} numberOfLines={1}>{centerPerson.userName}</Text>
-                    <Text style={styles.bigScore}>{centerPerson.totalScore}</Text>
-                </View>
+            {/* 🔶 TOP THREE */}
+            <View style={styles.topThreeRow}>
+              
+              {/* LEFT - 2ND */}
+              <View style={styles.smallRankBox}>
+                <Image source={rankIcons[2]} style={styles.rankBadgeSmall} />
+                <Image source={left.avatar} style={styles.smallAvatar} />
+                <Text style={styles.smallName} numberOfLines={1}>{left.userName}</Text>
+                <Text style={styles.smallScore}>{left.totalScore}</Text>
+              </View>
 
-                <View style={styles.smallRank}>
-                    <Image source={rankIcons[3]} style={styles.rankBadgeSmall} />
-                    <Image source={rightPerson.avatar} style={styles.smallAvatar} />
-                    <Text style={styles.smallName} numberOfLines={1}>{rightPerson.userName}</Text>
-                    <Text style={styles.smallScore}>{rightPerson.totalScore}</Text>
-                </View>
-                </View>
-            </LinearGradient>
-            </LinearGradient>
-        </View>
-      <ScrollView style={styles.leaderboardScrollView}>
-        <View style={styles.leaderboardContainer}>
-            {
-                leaderboardData.map((item, index) => (
-                    <View key={index} style={styles.leaderboardItem}>
-                        <Text style={styles.leaderboardItemTitle}>{index + 1}</Text>
-                        <Text style={styles.leaderboardItemTitle}>{item.userName}</Text>
-                        <Text style={styles.leaderboardItemScore}>{item.totalScore}</Text>
-                    </View>
-                ))
-            }
-          
-        </View>
+              {/* CENTER - 1ST */}
+              <View style={styles.centerRankBox}>
+                <Image source={rankIcons[1]} style={styles.rankBadgeBig} />
+                <Image source={center.avatar} style={styles.bigAvatar} />
+                <Text style={styles.bigName} numberOfLines={1}>{center.userName}</Text>
+                <Text style={styles.bigScore}>{center.totalScore}</Text>
+              </View>
+
+              {/* RIGHT - 3RD */}
+              <View style={styles.smallRankBox}>
+                <Image source={rankIcons[3]} style={styles.rankBadgeSmall} />
+                <Image source={right.avatar} style={styles.smallAvatar} />
+                <Text style={styles.smallName} numberOfLines={1}>{right.userName}</Text>
+                <Text style={styles.smallScore}>{right.totalScore}</Text>
+              </View>
+
+            </View>
+          </LinearGradient>
+        </LinearGradient>
+      </View>
+
+      {/* 🔶 SCROLLABLE LIST */}
+      <ScrollView 
+        style={styles.listScroll}
+        contentContainerStyle={styles.listContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        {leaderboardData.slice(3).map((item) => (
+          <View key={item.rank} style={styles.rowItem}>
+            
+            <Text style={styles.rankText}>{item.rank}</Text>
+
+            <Image source={item.avatar} style={styles.rowAvatar} />
+
+            <Text style={styles.rowName} numberOfLines={1}>
+              {item.userName}
+            </Text>
+
+            <Text style={styles.rowScore}>{item.totalScore}</Text>
+
+          </View>
+        ))}
       </ScrollView>
 
     </View>
+  );
+};
 
-  )
-}
+export default LeaderboardScreen;
 
-export default LeaderboardScreen
+
+
+// ======================= STYLES =======================
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "white",
-    },
-    leaderboardContainer: {
-        // flex: 1,
-        backgroundColor: "white",
-        marginTop: 20,
-    },
-    leaderboardScrollView: {
-        flex: 1,
-        backgroundColor: "white",
-        marginTop: 20,
-    },
-    leaderboardTitle: {
-        fontSize: 20,
-        fontWeight: "bold",
-        color: "black",
-    },
-    leaderboardItem: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "gray",
-    },  
-    leaderboardItemTitle: {
-        fontSize: 16,
-        fontWeight: "bold",
-        color: "black",
-    },
-    leaderboardItemScore: {
-        fontSize: 16,
-        fontWeight: "bold",
-        color: "black",
-    },  
-    bottomCardWrapper: {
-        // position: "absolute",
-        // top: 0,
-        // left: 0,
-        // right: 0,
-        marginTop: 10,
-        width: "100%",
-      },
-      borderGradient: {
-        width: "100%",
-        borderRadius: 40,
-        padding: 3, // This creates the 3px border effect
-      },
-      bottomCard: {
-        width: "100%",
-        minHeight: 225,
-        borderRadius: 40,
-        paddingTop: 24,
-        paddingBottom: 24,
-        paddingHorizontal: 20,
-      },
-      notch: {
-        alignSelf: "center",
-        backgroundColor: "transparent",
-        marginTop: -12,
-        marginBottom: 16,
-      },
-      notchText: {
-        color: "#FFFFFF",
-        fontSize: 18,
-        fontWeight: "700",
-        textAlign: "center",
-        textShadowColor: "rgba(0, 0, 0, 0.5)",
-        textShadowOffset: { width: 0, height: 2 },
-        textShadowRadius: 4,
-      },
-      topThreeContainer: {
-        // height :170,
-        // width : 304,
-        marginTop : 20,
-        alignSelf: "center",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingHorizontal: 0,
-        backgroundColor: "green",
-      },
-      smallRank: {
-        marginTop : 28,
-        alignItems: "center",
-        backgroundColor: "red",
-        flex: 1,
-        justifyContent: "flex-end",
-        
-      },
-      centerRank: {
-        alignItems: "center",
-        flex: 1,
-        backgroundColor: "blue",
-        justifyContent: "flex-end",
-        marginHorizontal: 18,
-      },
-      rankBadgeSmall: {
-        width: 32,
-        height: 32,
-        resizeMode: "contain",
-        marginBottom: 6,
-      },
-      rankBadgeBig: {
-        width: 38,
-        height: 38,
-        resizeMode: "contain",
-        marginBottom: 6,
-      },
-      smallAvatar: {
-        width: 80,
-        height: 80,
-        borderRadius: 40,
-        borderWidth: 2.5,
-        borderColor: "#FFB71B",
-      },
-      bigAvatar: {
-        width: 88,
-        height: 88,
-        borderRadius: 44,
-        borderWidth: 3,
-        borderColor: "#FFB71B",
-        marginBottom: 8,
-      },
-      smallName: {
-        color: "#FFFFFF",
-        fontSize: 13,
-        fontWeight: "600",
-        textAlign: "center",
-        marginBottom: 4,
-        maxWidth: 85,
-      },
-      bigName: {
-        color: "#FFFFFF",
-        fontSize: 15,
-        fontWeight: "600",
-        textAlign: "center",
-        marginBottom: 4,
-        maxWidth: 105,
-      },
-      smallScore: {
-        color: "#FFB71B",
-        fontSize: 15,
-        fontWeight: "700",
-      },
-      bigScore: {
-        color: "#FFB71B",
-        fontSize: 17,
-        fontWeight: "700",
-      },
-      cardTouchArea: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 1,
-      },
+  container: {
+    flex: 1,
+    backgroundColor: "#FFF8EF",
+  },
 
+  // 🔶 TOP FIXED CARD
+  topCardWrapper: {
+    width: "100%",
+    paddingHorizontal: 20,
+    marginTop: 20,
+  },
 
-})
+  cardBorder: {
+    padding: 3,
+    borderRadius: 36,
+  },
+
+  topCard: {
+    borderRadius: 36,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    minHeight: 200,
+  },
+
+  headerTitle: {
+    textAlign: "center",
+    color: "white",
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 15,
+  },
+
+  // 🔶 TOP THREE USERS
+  topThreeRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "flex-end",
+    marginTop: 5,
+  },
+
+  smallRankBox: {
+    alignItems: "center",
+    width: 90,
+  },
+
+  centerRankBox: {
+    alignItems: "center",
+    width: 110,
+  },
+
+  rankBadgeSmall: {
+    width: 30,
+    height: 30,
+    resizeMode: "contain",
+    marginBottom: 5,
+  },
+
+  rankBadgeBig: {
+    width: 40,
+    height: 40,
+    resizeMode: "contain",
+    marginBottom: 5,
+  },
+
+  smallAvatar: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    borderWidth: 2.5,
+    borderColor: "#FFB71B",
+    marginBottom: 5,
+  },
+
+  bigAvatar: {
+    width: 85,
+    height: 85,
+    borderRadius: 42,
+    borderWidth: 3,
+    borderColor: "#FFB71B",
+    marginBottom: 5,
+  },
+
+  smallName: {
+    color: "#FFFFFF",
+    fontSize: 12,
+    fontWeight: "600",
+    maxWidth: 80,
+    textAlign: "center",
+  },
+
+  smallScore: {
+    color: "#FFB71B",
+    fontSize: 14,
+    fontWeight: "700",
+    marginTop: 2,
+  },
+
+  bigName: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontWeight: "700",
+    maxWidth: 100,
+    textAlign: "center",
+  },
+
+  bigScore: {
+    color: "#FFB71B",
+    fontSize: 16,
+    fontWeight: "700",
+    marginTop: 2,
+  },
+
+  // 🔶 LIST
+  listScroll: {
+    flex: 1,
+    marginTop: 10,
+  },
+
+  listContainer: {
+    paddingBottom: 40,
+  },
+
+  rowItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFECD5",
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    marginHorizontal: 20,
+    marginBottom: 10,
+    borderRadius: 18,
+  },
+
+  rankText: {
+    fontSize: 16,
+    fontWeight: "700",
+    width: 25,
+    color: "#7B4A19",
+  },
+
+  rowAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginHorizontal: 12,
+  },
+
+  rowName: {
+    flex: 1,
+    fontSize: 15,
+    color: "#5A3A1A",
+    fontWeight: "600",
+  },
+
+  rowScore: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#B66A13",
+  },
+});
