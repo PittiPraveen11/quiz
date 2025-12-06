@@ -119,20 +119,20 @@ const styles = StyleSheet.create({
   // 🔶 TOP FIXED CARD
   topCardWrapper: {
     width: "100%",
-    paddingHorizontal: 20,
-    marginTop: 20,
+    // paddingHorizontal: 20,
+    // marginTop: 20,
   },
 
   cardBorder: {
     padding: 3,
-    borderRadius: 36,
+    borderRadius: 40,
   },
 
   topCard: {
-    borderRadius: 36,
+    borderRadius: 40,
     paddingVertical: 20,
     paddingHorizontal: 20,
-    minHeight: 200,
+    // minHeight: 225,
   },
 
   headerTitle: {
@@ -143,84 +143,82 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
 
-  // 🔶 TOP THREE USERS
   topThreeRow: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
+    flex: 1,
     alignItems: "flex-end",
+    gap: 30,
+    // paddingHorizontal: 4,
     marginTop: 5,
+    backgroundColor: "green",
   },
-
   smallRankBox: {
     alignItems: "center",
-    width: 90,
-  },
+    flex: 1,
 
+    backgroundColor: "blue",
+    // justifyContent: "flex-end",
+  },
   centerRankBox: {
     alignItems: "center",
-    width: 110,
+    // justifyContent: "flex-end",
+    flex: 1.35,
+    backgroundColor: "red",
   },
-
   rankBadgeSmall: {
-    width: 30,
-    height: 30,
+    width: 32,
+    height: 32,
     resizeMode: "contain",
-    marginBottom: 5,
+    marginBottom: 6,
   },
-
   rankBadgeBig: {
-    width: 40,
-    height: 40,
+    width: 38,
+    height: 38,
     resizeMode: "contain",
-    marginBottom: 5,
+    marginBottom: 6,
   },
-
   smallAvatar: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     borderWidth: 2.5,
     borderColor: "#FFB71B",
-    marginBottom: 5,
+    marginBottom: 8,
   },
-
   bigAvatar: {
-    width: 85,
-    height: 85,
-    borderRadius: 42,
+    width: 88,
+    height: 88,
+    borderRadius: 44,
     borderWidth: 3,
     borderColor: "#FFB71B",
-    marginBottom: 5,
+    marginBottom: 8,
   },
-
   smallName: {
     color: "#FFFFFF",
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "600",
-    maxWidth: 80,
     textAlign: "center",
+    marginBottom: 4,
+    maxWidth: 85,
   },
-
-  smallScore: {
-    color: "#FFB71B",
-    fontSize: 14,
-    fontWeight: "700",
-    marginTop: 2,
-  },
-
   bigName: {
     color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "700",
-    maxWidth: 100,
+    fontSize: 15,
+    fontWeight: "600",
     textAlign: "center",
+    marginBottom: 4,
+    maxWidth: 105,
   },
-
+  smallScore: {
+    color: "#FFB71B",
+    fontSize: 15,
+    fontWeight: "700",
+  },
   bigScore: {
     color: "#FFB71B",
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: "700",
-    marginTop: 2,
   },
 
   // 🔶 LIST
