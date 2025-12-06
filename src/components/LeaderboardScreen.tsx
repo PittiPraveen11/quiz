@@ -26,60 +26,110 @@ const LeaderboardScreen = ({ navigation }: { navigation: LeaderboardScreenProps 
   };
 
   return (
-    <View style={styles.bottomCardWrapper}>
-        <LinearGradient
-          colors={["#FFB71B", "#FFC446", "#FFA930", "#FFB71B", "#FF9500"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.borderGradient}
-        >
-          <LinearGradient
-            colors={[ "#361E02", "#A26721"]}
+    <ScrollView style={styles.container}>
+        <View style={styles.bottomCardWrapper}>
+            <LinearGradient
+            colors={["#FFB71B", "#FFC446", "#FFA930", "#FFB71B", "#FF9500"]}
             start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.bottomCard}
-          > 
-            <View style={styles.notch}>
-              <Text style={styles.notchText}>Leaderboard</Text>
-            </View>
-            <View style={styles.topThreeContainer}>
-              <View style={styles.smallRank}>
-                <Image source={rankIcons[2]} style={styles.rankBadgeSmall} />
-                <Image source={leftPerson.avatar} style={styles.smallAvatar} />
-                <Text style={styles.smallName} numberOfLines={1}>{leftPerson.userName}</Text>
-                <Text style={styles.smallScore}>{leftPerson.totalScore}</Text>
-              </View>
+            end={{ x: 1, y: 0 }}
+            style={styles.borderGradient}
+            >
+            <LinearGradient
+                colors={[ "#361E02", "#A26721"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.bottomCard}
+            > 
+                <View style={styles.notch}>
+                <Text style={styles.notchText}>Leaderboard</Text>
+                </View>
+                <View style={styles.topThreeContainer}>
+                <View style={styles.smallRank}>
+                    <Image source={rankIcons[2]} style={styles.rankBadgeSmall} />
+                    <Image source={leftPerson.avatar} style={styles.smallAvatar} />
+                    <Text style={styles.smallName} numberOfLines={1}>{leftPerson.userName}</Text>
+                    <Text style={styles.smallScore}>{leftPerson.totalScore}</Text>
+                </View>
 
-              <View style={styles.centerRank}>
-                <Image source={rankIcons[1]} style={styles.rankBadgeBig} />
-                <Image source={centerPerson.avatar} style={styles.bigAvatar} />
-                <Text style={styles.bigName} numberOfLines={1}>{centerPerson.userName}</Text>
-                <Text style={styles.bigScore}>{centerPerson.totalScore}</Text>
-              </View>
+                <View style={styles.centerRank}>
+                    <Image source={rankIcons[1]} style={styles.rankBadgeBig} />
+                    <Image source={centerPerson.avatar} style={styles.bigAvatar} />
+                    <Text style={styles.bigName} numberOfLines={1}>{centerPerson.userName}</Text>
+                    <Text style={styles.bigScore}>{centerPerson.totalScore}</Text>
+                </View>
 
-              <View style={styles.smallRank}>
-                <Image source={rankIcons[3]} style={styles.rankBadgeSmall} />
-                <Image source={rightPerson.avatar} style={styles.smallAvatar} />
-                <Text style={styles.smallName} numberOfLines={1}>{rightPerson.userName}</Text>
-                <Text style={styles.smallScore}>{rightPerson.totalScore}</Text>
-              </View>
-            </View>
-          </LinearGradient>
-        </LinearGradient>
-
+                <View style={styles.smallRank}>
+                    <Image source={rankIcons[3]} style={styles.rankBadgeSmall} />
+                    <Image source={rightPerson.avatar} style={styles.smallAvatar} />
+                    <Text style={styles.smallName} numberOfLines={1}>{rightPerson.userName}</Text>
+                    <Text style={styles.smallScore}>{rightPerson.totalScore}</Text>
+                </View>
+                </View>
+            </LinearGradient>
+            </LinearGradient>
+        </View>
+      <View>
+        <View style={styles.leaderboardContainer}>
+            {
+                leaderboardData.map((item, index) => (
+                    <View key={index} style={styles.leaderboardItem}>
+                        <Text style={styles.leaderboardItemTitle}>{index + 1}</Text>
+                        <Text style={styles.leaderboardItemTitle}>{item.userName}</Text>
+                        <Text style={styles.leaderboardItemScore}>{item.totalScore}</Text>
+                    </View>
+                ))
+            }
+          
+        </View>
       </View>
+
+    </ScrollView>
+
   )
 }
 
 export default LeaderboardScreen
 
 const styles = StyleSheet.create({
-
+    container: {
+        flex: 1,
+        backgroundColor: "white",
+    },
+    leaderboardContainer: {
+        // flex: 1,
+        backgroundColor: "white",
+        marginTop: 20,
+    },
+    leaderboardTitle: {
+        fontSize: 20,
+        fontWeight: "bold",
+        color: "black",
+    },
+    leaderboardItem: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: "gray",
+    },  
+    leaderboardItemTitle: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "black",
+    },
+    leaderboardItemScore: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "black",
+    },  
     bottomCardWrapper: {
-        position: "absolute",
-        top: 0,
+        // position: "absolute",
+        // top: 0,
         // left: 0,
         // right: 0,
+        marginTop: 10,
         width: "100%",
       },
       borderGradient: {
@@ -131,7 +181,7 @@ const styles = StyleSheet.create({
       },
       centerRank: {
         alignItems: "center",
-        flex: 1.15,
+        flex: 1,
         backgroundColor: "blue",
         justifyContent: "flex-end",
         marginHorizontal: 18,
