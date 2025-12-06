@@ -18,14 +18,15 @@ export type RootStackParamList = {
   ResultLeaderScreen: undefined;
   LeaderboardScreen: undefined;
   QuizScreen: undefined;
-  
+  Leaderboard: undefined;
+
 };
 export default function App() {
   return (
     <QuizProvider>
       <SafeAreaView style={{ flex: 1 }}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Question"
+        <Stack.Navigator initialRouteName="LeaderboardScreen"
           screenOptions={{
             headerShown: false,
           }}
@@ -35,7 +36,7 @@ export default function App() {
             <Stack.Screen name="ResultLeaderScreen" component={ResultLeaderScreen} />
             <Stack.Screen name="LeaderboardScreen" component={LeaderboardScreen} />
             <Stack.Screen name="QuizScreen" component={QuizScreen} />
-            
+            <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />              
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>

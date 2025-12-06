@@ -192,7 +192,7 @@ export default function ResultLeaderScreen({ navigation }: any) {
           </LinearGradient>
         </LinearGradient>
 
-        <TouchableOpacity style={styles.cardTouchArea} onPress={() => navigation.navigate("Result")} />
+        <TouchableOpacity style={styles.cardTouchArea} onPress={() => navigation.navigate("Leaderboard")} />
       </View>
 
     </View>
@@ -466,11 +466,11 @@ const styles = StyleSheet.create({
   },
   bannerWrapper: {
     // width: "100%",
-    marginTop: -20,
+    // marginTop: -20,
     alignItems: "center",
     justifyContent: "center",
-    // marginTop: -45,     
-    // marginBottom: 5,    
+    marginTop: -57,     
+    marginBottom: 5,    
   },
   
   bannerImage: {
