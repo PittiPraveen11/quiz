@@ -26,7 +26,7 @@ export default function App() {
     <QuizProvider>
       <SafeAreaView style={{ flex: 1 }}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="LeaderboardScreen"
+        <Stack.Navigator initialRouteName="Question"
           screenOptions={{
             headerShown: false,
           }}

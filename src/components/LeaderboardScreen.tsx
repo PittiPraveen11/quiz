@@ -108,12 +108,11 @@ export default LeaderboardScreen;
 
 
 
-// ======================= STYLES =======================
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF8EF",
+    backgroundColor: "#FFF7EB",
   },
 
   // 🔶 TOP FIXED CARD
@@ -125,11 +124,16 @@ const styles = StyleSheet.create({
 
   cardBorder: {
     padding: 3,
-    borderRadius: 40,
+    // borderTopLeftRadius: 40,
+    // borderTopRightRadius: 40,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
   },
 
   topCard: {
-    borderRadius: 40,
+    // borderRadius: 40,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
     paddingVertical: 20,
     paddingHorizontal: 20,
     // minHeight: 225,
@@ -144,28 +148,23 @@ const styles = StyleSheet.create({
   },
 
   topThreeRow: {
+    width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    flex: 1,
     alignItems: "flex-end",
-    gap: 30,
-    // paddingHorizontal: 4,
-    marginTop: 5,
-    backgroundColor: "green",
+    marginTop: 20,
   },
+  
   smallRankBox: {
     alignItems: "center",
-    flex: 1,
-
-    backgroundColor: "blue",
-    // justifyContent: "flex-end",
+    justifyContent: "flex-end",
   },
+  
   centerRankBox: {
     alignItems: "center",
-    // justifyContent: "flex-end",
-    flex: 1.35,
-    backgroundColor: "red",
+    justifyContent: "flex-end",
   },
+  
   rankBadgeSmall: {
     width: 32,
     height: 32,
@@ -234,7 +233,7 @@ const styles = StyleSheet.create({
   rowItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFECD5",
+    // backgroundColor: "#FFECD5",
     paddingVertical: 14,
     paddingHorizontal: 20,
     marginHorizontal: 20,
@@ -243,29 +242,36 @@ const styles = StyleSheet.create({
   },
 
   rankText: {
-    fontSize: 16,
-    fontWeight: "700",
-    width: 25,
-    color: "#7B4A19",
+    fontSize: 14,
+    fontWeight: "600",
+    width: 20,
+    textAlign: "center",
+    color: "#5A3000",
   },
 
   rowAvatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    marginHorizontal: 12,
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 50,
   },
 
   rowName: {
     flex: 1,
-    fontSize: 15,
-    color: "#5A3A1A",
+    fontSize: 12,
+    textAlign: "center",
+    
+    color: "#5A3000",
     fontWeight: "600",
   },
 
   rowScore: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#B66A13",
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#E78B25",
+    textAlign: "center",
+    marginRight: 10,
   },
 });

@@ -30,7 +30,7 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
 
   useEffect(() => {
     if (state.stars >= 1) s1.value = withSpring(1, { damping: 30 });
-    if (state.stars >= 2) setTimeout(() => (s2.value = withSpring(1, { damping: 30 })), 250);
+    if (state.stars >= 2) setTimeout(() => (s2.value = withSpring(1.5, { damping: 30 })), 250);
     if (state.stars >= 3) setTimeout(() => (s3.value = withSpring(1, { damping: 30 })), 500);
   }, [state.stars]);
 
@@ -40,6 +40,10 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
   const [displayScore, setDisplayScore] = useState(0);
   const [displayAccuracy, setDisplayAccuracy] = useState(0);
   const [displayPointsEarned, setDisplayPointsEarned] = useState(0);
+  const [showEarned, setShowEarned] = useState(false);
+  const [showPoints, setShowPoints] = useState(false);
+  const [showcontinue, setShowcontinue] = useState(false);
+
 
   useEffect(() => {
     console.log("state.score", state.score);
@@ -47,7 +51,7 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
       animatedScore.value = withTiming(state.score, {
         duration: 500,
       });
-    }, 3000);
+    }, 2000);
   }, []);
   useEffect(() => {
     console.log("accuracy", state.accuracy);
@@ -56,6 +60,15 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
         duration: 500,
       });
     }, 3000);
+    setTimeout(() => {
+      setShowEarned(true);
+    }, 4000);
+    setTimeout(() => {
+      setShowPoints(true);
+    }, 5000);
+    setTimeout(() => {
+      setShowcontinue(true);
+    }, 7000);
   }, []);
   useEffect(() => {
     console.log("pointsEarned", state.pointsEarned);
@@ -63,8 +76,8 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
       animatedPointsEarned.value = withTiming(state.pointsEarned, {
         duration: 500,
       });
-    }, 3000);
-  }, []);
+    }, 6000);
+  }, []);  
   useAnimatedReaction(
     () => animatedScore.value,
     (currentValue) => {
@@ -134,15 +147,20 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
       </View>
   
       {/* Earned Points */}
-      <View style={styles.pointsContainer}>
-        <Image
-          source={require("../assets/earnedcoins.png")}
-          style={styles.pointsIcon}
-        />
-        <Text style={styles.pointsText}>+ {displayPointsEarned} Points</Text>
+      <View style={styles.pointsTitleContainer}>
+        {showEarned && <Text style={styles.pointsTitle}>You've earned:</Text>}
+        {showPoints && <View style={styles.pointsContainer}>
+          <Image
+            source={require("../assets/earnedcoins.png")}
+            style={styles.pointsIcon}
+          />
+          <Text style={styles.pointsText}>+ {displayPointsEarned} Points</Text>
+        </View>}
       </View>
+
   
       {/* Restart / Continue button */}
+      {showcontinue && (
       <TouchableOpacity
           style={styles.tryBtnWrapper}
           onPress={() => {
@@ -158,6 +176,7 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
             <Text style={styles.tryBtnText}>Continue</Text>
           </LinearGradient>
         </TouchableOpacity>
+      )}
     </View>
   ); 
   
@@ -231,7 +250,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#FFE9C7",
     paddingVertical: 14,
-    paddingHorizontal: 28,
+    paddingHorizontal: 10,
     borderRadius: 14,
     marginBottom: 50,
   },
@@ -246,10 +265,18 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#B97A13",
   },
-
+  pointsTitle: {
+    fontSize: 17,
+    fontWeight: "600",
+    color: "#5A3000",
+    textAlign: "center",
+    marginBottom: 10,
+  },
+  pointsTitleContainer: {
+    alignItems: "center",
+  },
   /* Continue Button */
   tryBtnWrapper: {
-    marginTop: 18,
     width: "100%",
     alignItems: "center",
 
