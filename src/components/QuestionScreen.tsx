@@ -40,19 +40,28 @@ export default function QuestionScreen({
       {/* Title  .................................. */}
       <Text style={styles.title}>Mahabharat</Text>
 
-      {/* Top Row - Question Count + Timer  .................................. */}
+      {/* Top Row - Question Count   .................................. */}
       <View style={styles.topRow}>
-        <View >
-          <LinearGradient
-            colors={["#FF931E", "#F58B21", "#F8A917", "#FBA225", "#E27A19"]}
-            start={{ x: 0, y: 0.5 }}     
-            end={{ x: 1, y: 0.5 }}       
-            style={styles.tag}
-          >
-          <Text style={styles.tagText}>
-            Question {state.currentIndex + 1} out of {QuizQuestions.length}
-          </Text>
-          </LinearGradient>
+        <View>
+          {/* Border gradient wrapper */}
+          {/* <LinearGradient
+            colors={["#FBD500", "#B75000"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.tagBorder}
+          > */}
+            {/* Inner fill gradient */}
+            <LinearGradient
+              colors={["#FF931E", "#F58B21", "#F8A917", "#FBA225", "#E27A19"]}
+              start={{ x: 0, y: 0.5 }}     
+              end={{ x: 1, y: 0.5 }}       
+              style={styles.tag}
+            >
+              <Text style={styles.tagText}>
+                Question {state.currentIndex + 1} out of {QuizQuestions.length}
+              </Text>
+            </LinearGradient>
+          {/* </LinearGradient> */}
         </View>
 
         {/* <View style={styles.timer}>
@@ -120,10 +129,9 @@ export default function QuestionScreen({
 
               {/* Show Correct */}
               {state.showAnswer && isCorrect && (
-                <Icon
+                <Image
                   source={require("../assets/correct.png")}
-                  size={26}
-                  color="green"
+                  style={styles.correctIcon}
                 />
               )}
             </TouchableOpacity>
@@ -137,14 +145,16 @@ export default function QuestionScreen({
       <View style={styles.nextBtnContainer}>
         {state.showAnswer && (
           <TouchableOpacity onPress={handleNext}>
-            <LinearGradient
-              colors={["#FF931E", "#F58821", "#FFC117", "#FBA225", "#E27A19"]}
-              start={{ x: 0, y: 0.5 }}    
-              end={{ x: 1, y: 0.5 }}       
-              style={styles.nextBtn}
-            >
-        <Text style={styles.nextText}>Next Question</Text>
-        </LinearGradient>
+            <View style={styles.nextBtnWrapper}>
+              <LinearGradient
+                colors={["#FF931E", "#F58B21", "#FFC117", "#FBA225", "#E27A19"]}
+                start={{ x: 0, y: 0.5 }}    
+                end={{ x: 1, y: 0.5 }}       
+                style={styles.nextBtn}
+              >
+                <Text style={styles.nextText}>Next Question</Text>
+              </LinearGradient>
+            </View>
           </TouchableOpacity>
         )}
       </View>
@@ -162,7 +172,9 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     backgroundColor: "#FFF8F0",
-    padding: 20,
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 10,
   },
 
   title: {
@@ -173,7 +185,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontFamily: "Poppins-SemiBold",
     verticalAlign: "middle",
-    lineHeight:19.2,
+    lineHeight: 19.2,
     letterSpacing: -1.2,
     // verticalTrim: "Cap-Height",
   },
@@ -184,11 +196,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
+  tagBorder: {
+    borderRadius: 12,
+    padding: 1, // This creates the 1px border effect
+  },
   tag: {
     paddingHorizontal: 15,
     paddingVertical: 6,
-    borderRadius: 12,
+    borderRadius: 11, 
     borderWidth: 1,
+    // overflow: "hidden",
   },
 
   tagText: {
@@ -251,7 +268,7 @@ const styles = StyleSheet.create({
   
 
   questionContainer: {  
-  flex: 1,
+    flex: 1,
   },
 
   quizBoxContainer: {
@@ -261,89 +278,91 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderWidth: 1,
     borderColor: "#FEEFDD",
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 3,
-
+    overflow: "hidden",
   },
 
   quizBox: {
-    borderRadius: 18,
+    flex: 1,
+  },
+
+  scrollContent: {
+    flexGrow: 1,
   },
 
   image: {
     flex: 1,
     width: "100%",
     height: 140,
-    marginBottom: 10,
+    resizeMode: "cover",
   },
 
   questionTextContainer: {
-    flex: 1,
-    padding: 10,
+    paddingHorizontal: 12,
+    paddingTop: 16,
+    paddingBottom: 8,
   },
 
   questionText: {
     fontSize: 18,
     fontWeight: "600",
-    verticalAlign: "middle",
     color: "#5A3000",
-    marginBottom: 10,
     fontFamily: "Poppins-SemiBold",
-
-
+    lineHeight: 25.2, // 140% of 18px
+    letterSpacing: -0.8,
+    width: "100%",
   },
 
   optionsContainer: {
-    flex: 1,
-    padding: 15,
+    paddingHorizontal: 12,
+    paddingBottom: 16,
   },
 
   option: {
-    flex: 1,
-    padding: 10,
+    width: "100%",
+    height: 48,
+    paddingHorizontal: 16,
     borderRadius: 12,
     borderWidth: 1,
-    marginVertical: 5,
-
+    marginBottom: 8,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
 
   optionText: {
-    fontSize:16,
+    fontSize: 16,
     fontWeight: "400",
     fontFamily: "Poppins-Regular",
     color: "#5A3000",
     lineHeight: 17,
     letterSpacing: -0.8,
-    verticalAlign: "middle",
+    flex: 1,
+  },
 
+  correctIcon: {
+    width: 24,
+    height: 24,
+    resizeMode: "contain",
   },
  
   nextBtnContainer: {
-    height: 70,
-    padding: 10,       
+    paddingVertical: 16,
     justifyContent: "center", 
     alignItems: "center",     
   },
 
+  nextBtnWrapper: {
+    borderRadius: 12,
+    borderBottomWidth: 2,
+    borderBottomColor: "#AF4001",
+    overflow: "hidden",
+  },
   nextBtn: {
-    // paddingHorizontal: 40,
-    paddingVertical: 10,
-
+    width: 124,
     height: 48,
-    padding: 10,
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-    borderColor: "#B75000",
-    borderWidth: 1,
-    borderBottomWidth: 2,
-    borderBottomColor: "#AF4001",
-    borderStyle: "solid",
   },
 
   nextText: {
@@ -353,13 +372,10 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontFamily: "Poppins-SemiBold",
     letterSpacing: -0.3,
-    verticalAlign: "middle",
     lineHeight: 12,
-
   },
 
   score: {
-
     textAlign: "center",
     fontSize: 12,
     color: "#F0A52E",
@@ -367,8 +383,7 @@ const styles = StyleSheet.create({
     fontFamily: "Poppins-SemiBold",
     lineHeight: 12,
     letterSpacing: -0.3,
-    marginTop: 10,
+    marginTop: 8,
     marginBottom: 10,
-    verticalAlign: "middle",
   },
 });

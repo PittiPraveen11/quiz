@@ -18,6 +18,7 @@ export type RootStackParamList = {
   ResultLeaderScreen: undefined;
   LeaderboardScreen: undefined;
   QuizScreen: undefined;
+  
 };
 export default function App() {
   return (
