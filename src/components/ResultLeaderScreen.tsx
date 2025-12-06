@@ -29,13 +29,13 @@ import { leaderboardData } from "../data/leaderboardjson";
 export default function ResultLeaderScreen({ navigation }: any) {
   const { state, dispatch } = useContext(QuizContext);
 
-  // context values (dynamic)
+
   const correctAnswers = state.score ?? 0;
   const accuracy = state.accuracy ?? 0;
   const points = state.pointsEarned ?? 0;
-  const stars = state.stars ?? 0; // number 0..3 (or more)
+  const stars = state.stars ?? 0;
 
-  // top 3 from JSON (safe fallback)
+  
   const topThree = leaderboardData.slice(0, 3);
   const leftPerson = topThree[1] ?? topThree[0] ?? { avatar: require("../assets/person1.png"), userName: "", totalScore: 0, rank: 2 };
   const centerPerson = topThree[0] ?? topThree[1] ?? { avatar: require("../assets/person1.png"), userName: "", totalScore: 0, rank: 1 };
@@ -46,7 +46,7 @@ export default function ResultLeaderScreen({ navigation }: any) {
     2: require("../assets/secondrank.png"),
     3: require("../assets/thirdrank.png"),
   };
-  // cup pulse animation
+
   const scale = useSharedValue(1);
   useEffect(() => {
     scale.value = withRepeat(
@@ -60,9 +60,8 @@ export default function ResultLeaderScreen({ navigation }: any) {
     transform: [{ scale: scale.value }],
   }));
 
-  // stars rendering: show up to 3 placeholders (gold or grey)
   const renderStars = () => {
-    const arr = [0, 1, 2]; // three positions
+    const arr = [0, 1, 2]; 
     return (
       <View style={styles.starsRow}>
         {arr.map((i) => {
@@ -85,19 +84,16 @@ export default function ResultLeaderScreen({ navigation }: any) {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Cup (animated) */}
         <Animated.View style={[styles.cupWrapper, animatedCupStyle]}>
           <Image source={require("../assets/winnercup.png")} style={styles.cup} />
         </Animated.View>
 
-        {/* Stars (gold + grey placeholders) */}
+
         {renderStars()}
 
-        {/* Title + subtitle */}
         <Text style={styles.title}>Quiz Complete!</Text>
         <Text style={styles.subtitle}>Perfect! You have mastered divine knowledge!</Text>
 
-        {/* Stats row */}
         <View style={styles.statsRow}>
           <View style={styles.statCol}>
             <Text style={styles.statNumber}>{correctAnswers}</Text>
@@ -112,7 +108,6 @@ export default function ResultLeaderScreen({ navigation }: any) {
           </View>
         </View>
 
-        {/* Earned */}
         <View style={styles.earnedWrap}>
           <Text style={styles.earnedTitle}>You've earned:</Text>
 
@@ -124,7 +119,6 @@ export default function ResultLeaderScreen({ navigation }: any) {
           </View>
         </View>
 
-        {/* Try another button */}
         <TouchableOpacity
           style={styles.tryBtnWrapper}
           onPress={() => {
@@ -142,36 +136,28 @@ export default function ResultLeaderScreen({ navigation }: any) {
           </LinearGradient>
         </TouchableOpacity>
 
-        {/* Spacer so content above leaves room for bottom card */}
         <View style={{ height: 240 }} />
       </ScrollView>
 
-      {/* -------------------------
-          Leaderboard Card (bottom curved)
-         ------------------------- */}
+
       <View style={styles.bottomCardWrapper}>
-        {/* Gradient border wrapper - outer gradient creates the border */}
         <LinearGradient
           colors={["#FFB71B", "#FFC446", "#FFA930", "#FFB71B", "#FF9500"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.borderGradient}
         >
-          {/* Inner card with background gradient */}
           <LinearGradient
             colors={["#2A0E05", "#361E02", "#A26721"]}
             start={{ x: 0, y: 1 }}
             end={{ x: 1, y: 1 }}
             style={styles.bottomCard}
           >
-            {/* Decorative header notch for "Leaderboard" */}
             <View style={styles.notch}>
               <Text style={styles.notchText}>Leaderboard</Text>
             </View>
 
-            {/* Top three layout: left(2nd), center(1st big), right(3rd) */}
             <View style={styles.topThreeContainer}>
-              {/* LEFT - 2nd */}
               <View style={styles.smallRank}>
                 <Image source={rankIcons[2]} style={styles.rankBadgeSmall} />
                 <Image source={leftPerson.avatar} style={styles.smallAvatar} />
@@ -179,7 +165,6 @@ export default function ResultLeaderScreen({ navigation }: any) {
                 <Text style={styles.smallScore}>{leftPerson.totalScore}</Text>
               </View>
 
-              {/* CENTER - 1st (bigger) */}
               <View style={styles.centerRank}>
                 <Image source={rankIcons[1]} style={styles.rankBadgeBig} />
                 <Image source={centerPerson.avatar} style={styles.bigAvatar} />
@@ -187,7 +172,6 @@ export default function ResultLeaderScreen({ navigation }: any) {
                 <Text style={styles.bigScore}>{centerPerson.totalScore}</Text>
               </View>
 
-              {/* RIGHT - 3rd */}
               <View style={styles.smallRank}>
                 <Image source={rankIcons[3]} style={styles.rankBadgeSmall} />
                 <Image source={rightPerson.avatar} style={styles.smallAvatar} />
@@ -198,7 +182,6 @@ export default function ResultLeaderScreen({ navigation }: any) {
           </LinearGradient>
         </LinearGradient>
 
-        {/* Make the whole card touchable to go to big leaderboard */}
         <TouchableOpacity style={styles.cardTouchArea} onPress={() => navigation.navigate("Result")} />
       </View>
 
@@ -206,7 +189,6 @@ export default function ResultLeaderScreen({ navigation }: any) {
   );
 }
 
-/* ===================== STYLES ===================== */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
