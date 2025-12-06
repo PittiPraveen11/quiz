@@ -148,14 +148,24 @@ export default function ResultLeaderScreen({ navigation }: any) {
           style={styles.borderGradient}
         >
           <LinearGradient
-            colors={["#2A0E05", "#361E02", "#A26721"]}
-            start={{ x: 0, y: 1 }}
+            colors={[ "#361E02", "#A26721"]}
+            // locations={[ 0.2, 0.9]}
+            start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
+            // angle={90}
+            // useAngle={true}
+            // angleCenter={{ x: 0.5, y: 0.5 }}
             style={styles.bottomCard}
-          >
-            <View style={styles.notch}>
-              <Text style={styles.notchText}>Leaderboard</Text>
-            </View>
+          > 
+
+            <View style={styles.bannerWrapper}>
+                <Image
+                  source={require("../assets/leaderboard.png")}
+                  style={styles.bannerImage}
+                />
+
+                <Text style={styles.bannerTitle}>Leaderboard</Text>
+              </View>
 
             <View style={styles.topThreeContainer}>
               <View style={styles.smallRank}>
@@ -263,10 +273,10 @@ const styles = StyleSheet.create({
   },
 
   verticalDivider: {
-    width: 1,
-    height: 40,
-    backgroundColor: "#C8A687",
-    marginHorizontal: 20,
+    width: 1.5,
+    height: 60,
+    backgroundColor: "#5A3000",
+    marginHorizontal: 10,
   },
 
   earnedWrap: {
@@ -305,6 +315,15 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
   },
+  leaderboardImage: {
+    width: 180,     
+    height: 50,     
+    resizeMode: "contain",
+    alignSelf: "center",
+    marginTop: -10,
+    marginBottom: -4,
+  },
+  
 
   tryBtnWrapper: {
     marginTop: 18,
@@ -320,6 +339,8 @@ const styles = StyleSheet.create({
     borderColor: "transparent",
     justifyContent: "center",
     alignItems: "center",
+    borderBottomWidth: 2,
+    borderBottomColor: "#AF4001",
   },
 
   tryBtnText: {
@@ -328,9 +349,6 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
 
-  /* -------------------------------------------
-     LEADERBOARD CARD (BOTTOM)
-  --------------------------------------------- */
   bottomCardWrapper: {
     position: "absolute",
     bottom: 0,
@@ -446,4 +464,27 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 1,
   },
+  bannerWrapper: {
+    // width: "100%",
+    marginTop: -20,
+    alignItems: "center",
+    justifyContent: "center",
+    // marginTop: -45,     
+    // marginBottom: 5,    
+  },
+  
+  bannerImage: {
+    width: 210,
+    height: 65,
+    resizeMode: "contain",
+  },
+  
+  bannerTitle: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "500",
+    textAlign: "center",
+    position: "absolute",
+    top: 20,            
+  } 
 });

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Image, StyleSheet, } from "react-native";
 import { QuizContext } from "../context/QuizContect";
 import { QuizQuestions } from "../data/QuizQuestions";
 import { RootStackParamList } from "../../App";
@@ -12,6 +12,7 @@ import Animated, {
   useAnimatedReaction,
   runOnJS,
 } from "react-native-reanimated";
+import LinearGradient from "react-native-linear-gradient";
 
 type ResultScreenProps = NativeStackNavigationProp<RootStackParamList, "Result">;
 
@@ -143,13 +144,20 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
   
       {/* Restart / Continue button */}
       <TouchableOpacity
-        onPress={() => {
-          navigation.replace("ResultLeaderScreen");
-        }}
-        style={styles.continueBtn}
-      >
-        <Text style={styles.continueText}>Continue</Text>
-      </TouchableOpacity>
+          style={styles.tryBtnWrapper}
+          onPress={() => {
+            navigation.replace("ResultLeaderScreen");
+          }}
+        >
+          <LinearGradient 
+            colors={["#FF931E", "#F58B21", "#FFC117", "#FBA225", "#E27A19"]}
+            start={{ x: 0, y: 0.5 }}
+            end={{ x: 1, y: 0.5 }}
+            style={styles.tryBtn}
+          >
+            <Text style={styles.tryBtnText}>Continue</Text>
+          </LinearGradient>
+        </TouchableOpacity>
     </View>
   ); 
   
@@ -211,9 +219,9 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   verticalDivider: {
-    width: 1,
+    width: 1.5,
     height: 60,
-    backgroundColor: "#CBB9A2",
+    backgroundColor: "#5A3000",
     marginHorizontal: 10,
   },
 
@@ -240,6 +248,30 @@ const styles = StyleSheet.create({
   },
 
   /* Continue Button */
+  tryBtnWrapper: {
+    marginTop: 18,
+    width: "100%",
+    alignItems: "center",
+
+  },
+  tryBtn: {
+    marginTop: 20,
+    width: 124,
+    height: 48,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center",
+    borderBottomWidth: 2,
+    borderBottomColor: "#AF4001",
+  },
+
+  tryBtnText: {
+    fontSize: 17,
+    fontWeight: "600",
+    color: "#fff",
+  },
   continueBtn: {
     backgroundColor: "#F6A024",
     paddingVertical: 16,
