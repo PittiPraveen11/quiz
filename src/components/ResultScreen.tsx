@@ -42,144 +42,190 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
   const [displayPointsEarned, setDisplayPointsEarned] = useState(0);
   const [showEarned, setShowEarned] = useState(false);
   const [showPoints, setShowPoints] = useState(false);
-  const [showcontinue, setShowcontinue] = useState(false);
+  const [showContinue, setShowContinue] = useState(false);
 
 
   useEffect(() => {
-    console.log("state.score", state.score);
     setTimeout(() => {
-      animatedScore.value = withTiming(state.score, {
-        duration: 500,
-      });
+      animatedScore.value = withTiming(state.score, { duration: 500 });
     }, 2000);
   }, []);
   useEffect(() => {
-    console.log("accuracy", state.accuracy);
     setTimeout(() => {
-      animatedAccuracy.value = withTiming(state.accuracy, {
-        duration: 500,
-      });
+      animatedAccuracy.value = withTiming(state.accuracy, { duration: 500 });
     }, 3000);
-    setTimeout(() => {
-      setShowEarned(true);
-    }, 4000);
-    setTimeout(() => {
-      setShowPoints(true);
-    }, 5000);
-    setTimeout(() => {
-      setShowcontinue(true);
-    }, 7000);
+
+    setTimeout(() => setShowEarned(true), 4000);
+    setTimeout(() => setShowPoints(true), 5000);
+    setTimeout(() => setShowContinue(true), 7000);
   }, []);
   useEffect(() => {
-    console.log("pointsEarned", state.pointsEarned);
     setTimeout(() => {
-      animatedPointsEarned.value = withTiming(state.pointsEarned, {
-        duration: 500,
-      });
+      animatedPointsEarned.value = withTiming(
+        state.pointsEarned,
+        { duration: 500 }
+      );
     }, 6000);
-  }, []);  
+  }, []);
+
+  // Reaction updates
   useAnimatedReaction(
     () => animatedScore.value,
-    (currentValue) => {
-      runOnJS(setDisplayScore)(Number(currentValue.toFixed(2))); 
-    }
+    (v) => runOnJS(setDisplayScore)(Number(v.toFixed(2)))
   );
-
-  
   useAnimatedReaction(
     () => animatedAccuracy.value,
-    (currentValue) => {
-      runOnJS(setDisplayAccuracy)(Number(currentValue.toFixed(2)));
-    }
+    (v) => runOnJS(setDisplayAccuracy)(Number(v.toFixed(2)))
   );
-
   useAnimatedReaction(
     () => animatedPointsEarned.value,
-    (currentValue) => {
-      runOnJS(setDisplayPointsEarned)(Number(currentValue.toFixed(2)));
-    }
+    (v) => runOnJS(setDisplayPointsEarned)(Number(v.toFixed(2)))
   );
+
+  // --------------------------------------------------------
+  // ⭐ SMOOTH FADE + SLIDE ANIMATIONS (ONLY THIS IS ADDED)
+  // --------------------------------------------------------
+
+  const fadeEarned = useSharedValue(0);
+  const fadePoints = useSharedValue(0);
+  const fadeContinue = useSharedValue(0);
+
+  useEffect(() => {
+    if (showEarned)
+      fadeEarned.value = withTiming(1, { duration: 500 });
+
+    if (showPoints)
+      fadePoints.value = withTiming(1, { duration: 500 });
+
+    if (showContinue)
+      fadeContinue.value = withTiming(1, { duration: 600 });
+  }, [showEarned, showPoints, showContinue]);
+
+  const earnedStyle = useAnimatedStyle(() => ({
+    opacity: fadeEarned.value,
+    transform: [
+      { translateY: withTiming(fadeEarned.value === 1 ? 15 : 20) },
+    ],
+  }));
+
+  const pointsStyle = useAnimatedStyle(() => ({
+    opacity: fadePoints.value,
+    transform: [
+      { translateY: withTiming(fadePoints.value === 1 ? 15 : 20) },
+    ],
+  }));
+
+  const continueStyle = useAnimatedStyle(() => ({
+    opacity: fadeContinue.value,
+    transform: [
+      { translateY: withTiming(fadeContinue.value === 1 ? 20 : 25) },
+    ],
+  }));
+
+  // --------------------------------------------------------
+
   return (
     <View style={styles.container}>
-
+      {/* ⭐ Stars */}
       <View style={styles.starsContainer}>
-        {/* star 1 */}
         <View style={styles.starWrapper}>
-          <Image source={require("../assets/star_grey.png")} style={styles.star} />
+          <Image
+            source={require("../assets/star_grey.png")}
+            style={styles.star}
+          />
           <Animated.Image
             source={require("../assets/star_gold.png")}
             style={[styles.star, styles.absolute, star1Style]}
           />
         </View>
-  
-        {/* star 2 */}
+
         <View style={styles.starWrapper}>
-          <Image source={require("../assets/star_grey.png")} style={styles.star} />
+          <Image
+            source={require("../assets/star_grey.png")}
+            style={styles.star}
+          />
           <Animated.Image
             source={require("../assets/star_gold.png")}
             style={[styles.star, styles.absolute, star2Style]}
           />
         </View>
-  
-        {/* star 3 */}
+
         <View style={styles.starWrapper}>
-          <Image source={require("../assets/star_grey.png")} style={styles.star} />
+          <Image
+            source={require("../assets/star_grey.png")}
+            style={styles.star}
+          />
           <Animated.Image
             source={require("../assets/star_gold.png")}
             style={[styles.star, styles.absolute, star3Style]}
           />
         </View>
       </View>
-  
-      {/* Score + Accuracy row */}
+
+      {/* Score + Accuracy */}
       <View style={styles.scoreAccuracyRow}>
         <View style={styles.scoreBox}>
           <Text style={styles.scoreMain}>{displayScore}</Text>
-          <Text style={styles.scoreLabel}>Correct{"\n"}Answers</Text>
+          <Text style={styles.scoreLabel}>
+            Correct{"\n"}Answers
+          </Text>
         </View>
-  
+
         <View style={styles.verticalDivider} />
-  
+
         <View style={styles.scoreBox}>
           <Text style={styles.scoreMain}>{displayAccuracy}%</Text>
           <Text style={styles.scoreLabel}>Accuracy</Text>
         </View>
       </View>
-  
-      {/* Earned Points */}
+
+      {/* Earned + Points */}
       <View style={styles.pointsTitleContainer}>
-        {showEarned && <Text style={styles.pointsTitle}>You've earned:</Text>}
-        {showPoints && <View style={styles.pointsContainer}>
-          <Image
-            source={require("../assets/earnedcoins.png")}
-            style={styles.pointsIcon}
-          />
-          <Text style={styles.pointsText}>+ {displayPointsEarned} Points</Text>
-        </View>}
+        {showEarned && (
+          <Animated.View style={earnedStyle}>
+            <Text style={styles.pointsTitle}>You've earned:</Text>
+          </Animated.View>
+        )}
+
+        {showPoints && (
+          <Animated.View style={[styles.pointsContainer, pointsStyle]}>
+            <Image
+              source={require("../assets/earnedcoins.png")}
+              style={styles.pointsIcon}
+            />
+            <Text style={styles.pointsText}>
+              + {displayPointsEarned} Points
+            </Text>
+          </Animated.View>
+        )}
       </View>
 
-  
-      {/* Restart / Continue button */}
-      {showcontinue && (
-      <TouchableOpacity
-          style={styles.tryBtnWrapper}
-          onPress={() => {
-            navigation.replace("ResultLeaderScreen");
-          }}
-        >
-          <LinearGradient 
-            colors={["#FF931E", "#F58B21", "#FFC117", "#FBA225", "#E27A19"]}
-            start={{ x: 0, y: 0.5 }}
-            end={{ x: 1, y: 0.5 }}
-            style={styles.tryBtn}
+      {/* Continue Button */}
+      {showContinue && (
+        <Animated.View style={continueStyle}>
+          <TouchableOpacity
+            style={styles.tryBtnWrapper}
+            onPress={() => navigation.replace("ResultLeaderScreen")}
           >
-            <Text style={styles.tryBtnText}>Continue</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+            <LinearGradient
+              colors={[
+                "#FF931E",
+                "#F58B21",
+                "#FFC117",
+                "#FBA225",
+                "#E27A19",
+              ]}
+              start={{ x: 0, y: 0.5 }}
+              end={{ x: 1, y: 0.5 }}
+              style={styles.tryBtn}
+            >
+              <Text style={styles.tryBtnText}>Continue</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </Animated.View>
       )}
     </View>
-  ); 
-  
+  );
 }
 
 const styles = StyleSheet.create({
@@ -191,7 +237,6 @@ const styles = StyleSheet.create({
     paddingTop: 120,
   },
 
-  /* ⭐ STARS */
   starsContainer: {
     flexDirection: "row",
     marginBottom: 40,
@@ -212,7 +257,6 @@ const styles = StyleSheet.create({
     left: 0,
   },
 
-  /* Score + Accuracy row */
   scoreAccuracyRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -244,7 +288,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
 
-  /* Points earned section */
   pointsContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -275,11 +318,9 @@ const styles = StyleSheet.create({
   pointsTitleContainer: {
     alignItems: "center",
   },
-  /* Continue Button */
   tryBtnWrapper: {
     width: "100%",
     alignItems: "center",
-
   },
   tryBtn: {
     marginTop: 20,
@@ -293,24 +334,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "#AF4001",
   },
-
   tryBtnText: {
     fontSize: 17,
     fontWeight: "600",
     color: "#fff",
   },
-  continueBtn: {
-    backgroundColor: "#F6A024",
-    paddingVertical: 16,
-    paddingHorizontal: 100,
-    borderRadius: 20,
-    elevation: 5,
-  },
-  continueText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "700",
-    textAlign: "center",
-  },
 });
-

@@ -5,7 +5,7 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
+  Dimensions,
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import Animated, {
@@ -28,12 +28,16 @@ import { leaderboardData } from "../data/leaderboardjson";
 
 export default function ResultLeaderScreen({ navigation }: any) {
   const { state, dispatch } = useContext(QuizContext);
-
+  const screenHeight = Dimensions.get("window").height;
+  const screenWidth = Dimensions.get("window").width;
 
   const correctAnswers = state.score ?? 0;
   const accuracy = state.accuracy ?? 0;
   const points = state.pointsEarned ?? 0;
   const stars = state.stars ?? 0;
+  
+  // Calculate responsive leaderboard card height (increased)
+  const leaderboardCardHeight = Math.max(200, screenHeight * 0.25);
 
   
   const topThree = leaderboardData.slice(0, 3);
@@ -66,11 +70,15 @@ export default function ResultLeaderScreen({ navigation }: any) {
       <View style={styles.starsRow}>
         {arr.map((i) => {
           const filled = i < stars;
+          const isCenter = i === 1;
           return (
             <Image
               key={i}
               source={filled ? require("../assets/star.png") : require("../assets/star_grey.png")}
-              style={styles.starIcon}
+              style={[
+                styles.starIcon,
+                isCenter && styles.starCenter,
+              ]}
             />
           );
         })}
@@ -80,14 +88,19 @@ export default function ResultLeaderScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
-      <ScrollView 
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <View style={[styles.contentContainer, { paddingBottom: leaderboardCardHeight + 10 }]}>
         <Animated.View style={[styles.cupWrapper, animatedCupStyle]}>
-          <Image source={require("../assets/winnercup.png")} style={styles.cup} />
+          <Image 
+            source={require("../assets/winnercup.png")} 
+            style={[
+              styles.cup,
+              {
+                width: Math.min(85, screenWidth * 0.23),
+                height: Math.min(85, screenWidth * 0.23),
+              }
+            ]} 
+          />
         </Animated.View>
-
 
         {renderStars()}
 
@@ -119,25 +132,60 @@ export default function ResultLeaderScreen({ navigation }: any) {
           </View>
         </View>
 
-        <TouchableOpacity
-          style={styles.tryBtnWrapper}
-          onPress={() => {
-            dispatch({ type: "RESET" });
-            navigation.replace("Question");
-          }}
-        >
-          <LinearGradient 
-            colors={["#FF931E", "#F58B21", "#FFC117", "#FBA225", "#E27A19"]}
-            start={{ x: 0, y: 0.5 }}
-            end={{ x: 1, y: 0.5 }}
-            style={styles.tryBtn}
+        <View style={styles.buttonsRow}>
+          <TouchableOpacity
+            style={styles.buttonWrapper}
+            onPress={() => {
+              dispatch({ type: "RESET" });
+              navigation.replace("Question");
+            }}
           >
-            <Text style={styles.tryBtnText}>Try another</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+            {/* Border gradient wrapper */}
+            <LinearGradient
+              colors={["#FBD500", "#B75000"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.buttonBorder}
+            >
+              {/* Inner fill gradient */}
+              <LinearGradient 
+                colors={["#FF931E", "#F58B21", "#FFC117", "#FBA225", "#E27A19"]}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Try another</Text>
+              </LinearGradient>
+            </LinearGradient>
+          </TouchableOpacity>
 
-        <View style={{ height: 240 }} />
-      </ScrollView>
+          <TouchableOpacity
+            style={styles.buttonWrapper}
+            onPress={() => {
+              // TODO: Implement share functionality
+              console.log("Share score");
+            }}
+          >
+            {/* Border gradient wrapper */}
+            <LinearGradient
+              colors={["#FBD500", "#B75000"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.buttonBorder}
+            >
+              {/* Inner fill gradient */}
+              <LinearGradient 
+                colors={["#FF931E", "#F58B21", "#FFC117", "#FBA225", "#E27A19"]}
+                start={{ x: 0, y: 0.5 }}
+                end={{ x: 1, y: 0.5 }}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>Share Score</Text>
+              </LinearGradient>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+      </View>
 
 
       <View style={styles.bottomCardWrapper}>
@@ -204,11 +252,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFF6EC",
   },
-  scrollContent: {
+  contentContainer: {
+    flex: 1,
     alignItems: "center",
-    paddingTop: 18,
+    paddingTop: 12,
     paddingHorizontal: 16,
-    paddingBottom: 0,
   },
 
   cupWrapper: {
@@ -217,76 +265,79 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cup: {
-    width: 100,
-    height: 100,
     resizeMode: "contain",
   },
 
   starsRow: {
     flexDirection: "row",
-    marginTop: 6,
+    marginTop: 20,
     alignItems: "center",
+    justifyContent: "center",
   },
   starIcon: {
-    width: 34,
-    height: 34,
-    marginHorizontal: 6,
+    width: 28,
+    height: 28,
+    marginHorizontal: 5,
     resizeMode: "contain",
+  },
+  starCenter: {
+    marginTop: -10, 
   },
 
   title: {
-    marginTop: 10,
-    fontSize: 26,
+    marginTop: 8,
+    fontSize: 22,
     fontWeight: "800",
     color: "#3D1F00",
     textAlign: "center",
   },
   subtitle: {
-    marginTop: 5,
+    marginTop: 4,
     color: "#7A4E2B",
-    fontSize: 14,
+    fontSize: 12,
     textAlign: "center",
   },
 
   statsRow: {
     flexDirection: "row",
-    marginTop: 25,
+    marginTop: 16,
     alignItems: "center",
   },
   statCol: {
     alignItems: "center",
-    width: 120,
+    flex: 1,
+    maxWidth: 130,
   },
   statNumber: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: "700",
     color: "#2A2E05",
-    lineHeight: 28,
+    lineHeight: 24,
   },
 
   statLabel: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#A27A52",
     textAlign: "center",
-    lineHeight: 18,
+    lineHeight: 16,
     marginTop: 4,
   },
 
   verticalDivider: {
     width: 1.5,
-    height: 60,
+    height: 50,
     backgroundColor: "#5A3000",
     marginHorizontal: 10,
   },
 
   earnedWrap: {
-    marginTop: 18,
+    marginTop: 14,
     alignItems: "center",
     width: "100%",
   },
   earnedTitle: {
-    marginTop: 25,
-    fontSize: 16,
+    marginTop: 14,
+    fontSize: 14,
     color: "#2A2E05",
     fontWeight: "600",
   },
@@ -294,13 +345,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 12,
+    marginTop: 8,
   },
   pointsPill: {
     backgroundColor: "#FFF1D1",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
     elevation: 1,
@@ -308,12 +359,12 @@ const styles = StyleSheet.create({
   pointsPillText: {
     color: "#C48A1C",
     fontWeight: "700",
-    fontSize: 16,
-    marginRight: 8,
+    fontSize: 14,
+    marginRight: 6,
   },
   pointsIcon: {
-    width: 22,
-    height: 22,
+    width: 18,
+    height: 18,
   },
   leaderboardImage: {
     width: 180,     
@@ -325,26 +376,34 @@ const styles = StyleSheet.create({
   },
   
 
-  tryBtnWrapper: {
-    marginTop: 18,
+  buttonsRow: {
+    flexDirection: "row",
+    marginTop: 14,
     width: "100%",
-    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 6,
   },
-  tryBtn: {
-    marginTop: 20,
-    width: 124,
-    height: 48,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
+  buttonWrapper: {
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  buttonBorder: {
+    borderRadius: 8,
+    padding: 1, // Creates 1px gradient border
     borderBottomWidth: 2,
     borderBottomColor: "#AF4001",
   },
+  button: {
+    width: "100%",
+    height: 40,
+    borderRadius: 7, // 8 - 1 (border width)
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
 
-  tryBtnText: {
-    fontSize: 17,
+  buttonText: {
+    fontSize: 13,
     fontWeight: "600",
     color: "#fff",
   },
@@ -364,11 +423,11 @@ const styles = StyleSheet.create({
   },
   bottomCard: {
     width: "100%",
-    minHeight: 225,
+    minHeight: 200,
     borderTopLeftRadius: 37, // 40 - 3 (border width)
     borderTopRightRadius: 37,
-    paddingTop: 24,
-    paddingBottom: 24,
+    paddingTop: 18,
+    paddingBottom: 18,
     paddingHorizontal: 20,
   },
   notch: {
@@ -391,6 +450,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-end",
     paddingHorizontal: 4,
+    marginTop: 6,
   },
   smallRank: {
     alignItems: "center",
@@ -403,57 +463,57 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   rankBadgeSmall: {
-    width: 32,
-    height: 32,
+    width: 24,
+    height: 24,
     resizeMode: "contain",
-    marginBottom: 6,
+    marginBottom: 4,
   },
   rankBadgeBig: {
-    width: 38,
-    height: 38,
+    width: 28,
+    height: 28,
     resizeMode: "contain",
-    marginBottom: 6,
+    marginBottom: 4,
   },
   smallAvatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    borderWidth: 2.5,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    borderWidth: 2,
     borderColor: "#FFB71B",
-    marginBottom: 8,
+    marginBottom: 6,
   },
   bigAvatar: {
-    width: 88,
-    height: 88,
-    borderRadius: 44,
-    borderWidth: 3,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    borderWidth: 2.5,
     borderColor: "#FFB71B",
-    marginBottom: 8,
+    marginBottom: 6,
   },
   smallName: {
+    color: "#FFFFFF",
+    fontSize: 11,
+    fontWeight: "600",
+    textAlign: "center",
+    marginBottom: 3,
+    maxWidth: 70,
+  },
+  bigName: {
     color: "#FFFFFF",
     fontSize: 13,
     fontWeight: "600",
     textAlign: "center",
-    marginBottom: 4,
+    marginBottom: 3,
     maxWidth: 85,
-  },
-  bigName: {
-    color: "#FFFFFF",
-    fontSize: 15,
-    fontWeight: "600",
-    textAlign: "center",
-    marginBottom: 4,
-    maxWidth: 105,
   },
   smallScore: {
     color: "#FFB71B",
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: "700",
   },
   bigScore: {
     color: "#FFB71B",
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: "700",
   },
   cardTouchArea: {
@@ -469,22 +529,22 @@ const styles = StyleSheet.create({
     // marginTop: -20,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: -57,     
-    marginBottom: 5,    
+    marginTop: -45,     
+    marginBottom: 6,    
   },
   
   bannerImage: {
-    width: 210,
-    height: 65,
+    width: 180,
+    height: 55,
     resizeMode: "contain",
   },
   
   bannerTitle: {
     color: "white",
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "500",
     textAlign: "center",
     position: "absolute",
-    top: 20,            
+    top: 18,            
   } 
 });

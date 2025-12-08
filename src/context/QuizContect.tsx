@@ -46,6 +46,7 @@ function quizReducer(state: QuizModalClass, action: QuizAction): QuizModalClass 
         showAnswer: true,
         score: isCorrect ? state.score + 1 : state.score,
         pointsEarned: isCorrect ? state.pointsEarned + 10 : state.pointsEarned
+        
       };
 
     case "NEXT_QUESTION":
