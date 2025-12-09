@@ -38,33 +38,36 @@ const TOTAL_QUESTIONS = QuizQuestions.length;
 
 function quizReducer(state: QuizModalClass, action: QuizAction): QuizModalClass {
   switch (action.type) {
-    case "SELECT_OPTION":
+    case "SELECT_OPTION": {
       const isCorrect = action.payload.correct === 1;
+      const newScore = isCorrect ? state.score + 1 : state.score;
+      const accuracy = Number(((Number(newScore) / Number(TOTAL_QUESTIONS)) * 100).toFixed(2));
+      let stars = 0;
+      if (newScore >= 0 && newScore <= 0.5) stars = 1;
+      else if (newScore >= 0.5 && newScore <= 1.5) stars = 2;
+      else if (newScore >= 1.5 && newScore <= 3) stars = 3;
+      
       return {
         ...state,
         selectedOption: action.payload,
         showAnswer: true,
-        score: isCorrect ? state.score + 1 : state.score,
-        pointsEarned: isCorrect ? state.pointsEarned + 10 : state.pointsEarned
-        
+        score: newScore,
+        pointsEarned: isCorrect ? state.pointsEarned + 10 : state.pointsEarned,
+        accuracy,
+        stars,
       };
+    }
 
-    case "NEXT_QUESTION":
+    case "NEXT_QUESTION": {
       const newIndex = state.currentIndex + 1;
-      const accuracy = Number(((Number(state.score) / Number(TOTAL_QUESTIONS)) * 100).toFixed(2));
-      let stars = 0;
-      if (state.score >= 0 && state.score <= 0.5) stars = 1;
-      else if (state.score >= 0.5 && state.score <= 1.5) stars = 2;
-      else if (state.score >= 1.5 && state.score <= 3) stars = 3;
 
       return {
         ...state,
         currentIndex: newIndex,
         selectedOption: null,
         showAnswer: false,
-        accuracy,
-        stars,
       };
+    }
 
     case "RESET":
       return quizInitialState;

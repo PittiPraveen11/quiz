@@ -30,7 +30,7 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
 
   useEffect(() => {
     if (state.stars >= 1) s1.value = withSpring(1, { damping: 30 });
-    if (state.stars >= 2) setTimeout(() => (s2.value = withSpring(1.5, { damping: 30 })), 250);
+    if (state.stars >= 2) setTimeout(() => (s2.value = withSpring(1, { damping: 30 })), 250);
     if (state.stars >= 3) setTimeout(() => (s3.value = withSpring(1, { damping: 30 })), 500);
   }, [state.stars]);
 
@@ -142,11 +142,11 @@ export default function ResultScreen({ navigation }: { navigation: ResultScreenP
         <View style={styles.starWrapper}>
           <Image
             source={require("../assets/star_grey.png")}
-            style={styles.star}
+            style={[styles.star, styles.starCenter]}
           />
           <Animated.Image
             source={require("../assets/star_gold.png")}
-            style={[styles.star, styles.absolute, star2Style]}
+            style={[styles.star, styles.absolute, styles.starCenter, star2Style]}
           />
         </View>
 
@@ -240,11 +240,17 @@ const styles = StyleSheet.create({
   starsContainer: {
     flexDirection: "row",
     marginBottom: 40,
+    marginTop: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
   starWrapper: {
     width: 70,
     height: 70,
     marginHorizontal: 10,
+  },
+  starCenter: {
+    marginTop: -10, // Position center star higher to create arc effect
   },
   star: {
     width: "100%",
